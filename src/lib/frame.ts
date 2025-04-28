@@ -2,7 +2,7 @@ import * as frame from "@farcaster/frame-sdk";
 
 export async function initializeFrame() {
   try {
-    const context = await frame.sdk.context();
+    const context = await frame.sdk.context;
 
     if (!context || !context.user) {
       console.log("not in frame context");
