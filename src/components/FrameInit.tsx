@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { initializeFrame } from "@/lib/frame";
 
 export function FrameInit() {
+  const [initialized, setInitialized] = useState(false);
+
   useEffect(() => {
-    initializeFrame();
+    async function init() {
+      try {
+        await initializeFrame();
+        setInitialized(true);
+      } catch (error) {
+        console.error("Failed to initialize frame:", error);
+      }
+    }
+
+    init();
   }, []);
 
   return null;
