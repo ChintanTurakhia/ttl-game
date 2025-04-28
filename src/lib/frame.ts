@@ -2,28 +2,40 @@ import * as frame from "@farcaster/frame-sdk";
 
 // Check if we're in a Frame environment
 const isFrameAvailable = () => {
-  return typeof window !== "undefined" && typeof frame.sdk !== "undefined";
+  const available =
+    typeof window !== "undefined" && typeof frame.sdk !== "undefined";
+  console.log(`isFrameAvailable check: ${available}`);
+  return available;
 };
 
 export async function initializeFrame() {
+  console.log("initializeFrame started");
   try {
     // Get user context properly
     if (isFrameAvailable()) {
+      console.log("Frame SDK detected, calling ready() and getContext()");
       await frame.sdk.ready();
+      console.log("frame.sdk.ready() called");
 
       // Access user information via the context
       const userInfo = await frame.sdk.getContext();
+      console.log("frame.sdk.getContext() returned:", userInfo);
 
       if (userInfo && userInfo.fid) {
         window.userFid = userInfo.fid;
         window.username = userInfo.username;
-        console.log("Frame authenticated with FID:", userInfo.fid);
+        console.log(
+          `Frame authenticated: FID=${userInfo.fid}, Username=${userInfo.username}`
+        );
       } else {
-        console.log("Not in frame context or user not authenticated");
+        console.log(
+          "Not in frame context or user not authenticated by getContext()"
+        );
         // For development, set a test FID
         if (process.env.NODE_ENV === "development") {
           window.userFid = 1234; // Test FID for development
           window.username = "TestUser";
+          console.log("Setting development fallback user (FID: 1234)");
         }
       }
     } else if (
@@ -31,9 +43,12 @@ export async function initializeFrame() {
       process.env.NODE_ENV === "development"
     ) {
       // For development outside Frame
+      console.log("Frame SDK not detected, but in development mode.");
       window.userFid = 1234; // Test FID for development
       window.username = "TestUser";
-      console.log("Development mode - using test FID");
+      console.log("Setting development fallback user (FID: 1234)");
+    } else {
+      console.log("Not in Frame environment and not in development mode.");
     }
   } catch (error) {
     console.error("Error initializing frame:", error);
@@ -44,16 +59,26 @@ export async function initializeFrame() {
     ) {
       window.userFid = 1234; // Test FID for development
       window.username = "TestUser";
+      console.log(
+        "Error occurred, setting development fallback user (FID: 1234)"
+      );
     }
   }
+  console.log(
+    "initializeFrame finished. Current window.userFid:",
+    window.userFid
+  );
 }
 
 // Helper to open URLs
 export async function openUrl(url: string) {
+  console.log(`Attempting to open URL: ${url}`);
   try {
     if (isFrameAvailable()) {
+      console.log("Using frame.sdk.openUrl");
       await frame.sdk.openUrl(url);
     } else {
+      console.log("Frame SDK not available, using window.open");
       // Fallback for development
       window.open(url, "_blank");
     }
@@ -61,6 +86,7 @@ export async function openUrl(url: string) {
     console.error("Error opening URL:", error);
     // Fallback if frame SDK fails
     if (typeof window !== "undefined") {
+      console.log("Error opening URL via SDK, falling back to window.open");
       window.open(url, "_blank");
     }
   }
@@ -68,11 +94,17 @@ export async function openUrl(url: string) {
 
 // Helper to view a profile
 export async function viewProfile(fid: number) {
+  console.log(`Attempting to view profile for FID: ${fid}`);
   try {
     if (isFrameAvailable() && fid) {
+      console.log("Using frame.sdk.viewUser");
       await frame.sdk.viewUser(fid);
     } else if (process.env.NODE_ENV === "development") {
-      console.log("Would view profile for FID:", fid);
+      console.log(`DEV MODE: Would view profile for FID: ${fid}`);
+    } else {
+      console.log(
+        "Cannot view profile: Frame SDK not available or invalid FID."
+      );
     }
   } catch (error) {
     console.error("Error viewing profile:", error);

@@ -14,26 +14,50 @@ export default function LeaderboardPage() {
     // Check if user is authenticated through Farcaster
     const checkAuth = () => {
       if (window.userFid) {
+        console.log("LeaderboardPage: Found window.userFid:", window.userFid);
         setUserFid(window.userFid);
         return true;
       }
+      console.log("LeaderboardPage: window.userFid not found initially.");
       return false;
     };
 
     if (!checkAuth()) {
+      console.log("LeaderboardPage: Starting poll for window.userFid.");
       // Poll for userFid as it might be set after frame initialization
-      const interval = setInterval(() => {
+      const intervalId = setInterval(() => {
+        console.log("LeaderboardPage: Polling...");
         if (checkAuth()) {
-          clearInterval(interval);
+          console.log(
+            "LeaderboardPage: Found window.userFid via poll, clearing interval."
+          );
+          clearInterval(intervalId);
+          loadScores(); // Load scores only after auth check
+        }
+      }, 200);
+
+      // Stop polling after a certain time
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        if (!window.userFid) {
+          console.warn(
+            "LeaderboardPage: Timed out waiting for window.userFid."
+          );
+          // Can still load scores even if auth fails, just won't highlight user
           loadScores();
         }
-      }, 500);
+      }, 5000); // Stop after 5 seconds
 
-      return () => clearInterval(interval);
+      return () => {
+        console.log("LeaderboardPage: Cleaning up interval and timeout.");
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
     } else {
+      // Already authenticated (or recognized), load scores immediately
       loadScores();
     }
-  }, []);
+  }, []); // Run only once on mount
 
   const loadScores = () => {
     try {

@@ -16,17 +16,40 @@ export default function CreatePage() {
   useEffect(() => {
     // Check if user is authenticated through Farcaster
     if (window.userFid) {
+      console.log("CreatePage: Found initial window.userFid:", window.userFid);
       setUserFid(window.userFid);
     } else {
+      console.log(
+        "CreatePage: window.userFid not found initially, starting poll."
+      );
       // Poll for userFid as it might be set after frame initialization
-      const interval = setInterval(() => {
+      const intervalId = setInterval(() => {
         if (window.userFid) {
+          console.log(
+            "CreatePage: Found window.userFid via poll:",
+            window.userFid
+          );
           setUserFid(window.userFid);
-          clearInterval(interval);
+          clearInterval(intervalId);
+        } else {
+          console.log("CreatePage: Polling... window.userFid still not found.");
         }
-      }, 500);
+      }, 200); // Poll more frequently initially
 
-      return () => clearInterval(interval);
+      // Stop polling after a certain time to avoid infinite loops
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        if (!window.userFid) {
+          console.warn("CreatePage: Timed out waiting for window.userFid.");
+          // Optionally set an error state here
+        }
+      }, 5000); // Stop after 5 seconds
+
+      return () => {
+        console.log("CreatePage: Cleaning up interval and timeout.");
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
     }
   }, []);
 

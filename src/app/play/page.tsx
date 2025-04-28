@@ -19,26 +19,47 @@ export default function PlayPage() {
     // Check if user is authenticated through Farcaster
     const checkAuth = () => {
       if (window.userFid) {
+        console.log("PlayPage: Found window.userFid:", window.userFid);
         setUserFid(window.userFid);
         return true;
       }
+      console.log("PlayPage: window.userFid not found initially.");
       return false;
     };
 
     if (!checkAuth()) {
+      console.log("PlayPage: Starting poll for window.userFid.");
       // Poll for userFid as it might be set after frame initialization
-      const interval = setInterval(() => {
+      const intervalId = setInterval(() => {
+        console.log("PlayPage: Polling...");
         if (checkAuth()) {
-          clearInterval(interval);
-          loadStatements();
+          console.log(
+            "PlayPage: Found window.userFid via poll, clearing interval."
+          );
+          clearInterval(intervalId);
+          loadStatements(); // Load statements only after auth
         }
-      }, 500);
+      }, 200);
 
-      return () => clearInterval(interval);
+      // Stop polling after a certain time
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        if (!window.userFid) {
+          console.warn("PlayPage: Timed out waiting for window.userFid.");
+          // Could set an error state or redirect
+        }
+      }, 5000); // Stop after 5 seconds
+
+      return () => {
+        console.log("PlayPage: Cleaning up interval and timeout.");
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
     } else {
+      // Already authenticated, load statements immediately
       loadStatements();
     }
-  }, []);
+  }, []); // Run only once on mount
 
   const loadStatements = () => {
     if (!window.userFid) return;
