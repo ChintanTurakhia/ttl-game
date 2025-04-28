@@ -2,14 +2,14 @@ import * as frame from "@farcaster/frame-sdk";
 
 export async function initializeFrame() {
   try {
-    const context = await frame.sdk.context.user;
+    const context = await frame.sdk.context();
 
     if (!context || !context.user) {
       console.log("not in frame context");
       return null;
     }
 
-    const user = context.user.user ? context.user.user : context.user;
+    const user = context.user;
 
     // Set user FID in window for client-side access
     if (typeof window !== "undefined") {
