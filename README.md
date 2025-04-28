@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Two Truths and a Lie - Farcaster Mini-App
+
+A mini-app for Farcaster users to play the classic "Two Truths and a Lie" game. Create statements about yourself (two truths and one lie), then challenge others to guess which one is the lie!
+
+## Features
+
+- Create sets of statements (two truths, one lie)
+- Play by guessing which statements from other users are lies
+- Score points for correct guesses
+- View the leaderboard of top players
+
+## Technology Stack
+
+- Next.js
+- Tailwind CSS
+- Farcaster Frames V2 SDK
+- LocalStorage for data persistence
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 16+
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd ttl-game
+```
+
+2. Install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory and add:
+
+```
+NEXT_PUBLIC_APP_URL=<your-deployed-url>
+```
+
+For local development, you can leave this as the default (`http://localhost:3000`).
+
+4. Run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project can be deployed to any platform that supports Next.js, such as Vercel, Netlify, or AWS Amplify.
 
-## Learn More
+Example for Vercel:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm install -g vercel
+vercel
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Using the Mini-App
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Open the mini-app in Farcaster
+2. Authenticate with your Farcaster account
+3. Create your two truths and one lie
+4. Play by guessing which statements from other users are lies
+5. Check the leaderboard to see your ranking
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+MIT
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Credits
+
+Created for Farcaster Frames V2
