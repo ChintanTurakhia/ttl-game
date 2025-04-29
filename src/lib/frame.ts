@@ -13,9 +13,12 @@ export async function initializeFrame() {
   try {
     // Get user context properly
     if (isFrameAvailable()) {
-      console.log("Frame SDK detected, calling ready() and getContext()");
-      await frame.sdk.ready();
-      console.log("frame.sdk.ready() called");
+      console.log(
+        "Frame SDK detected, calling actions.ready() and getContext()"
+      );
+      // Use actions namespace as per documentation
+      await frame.sdk.actions.ready();
+      console.log("frame.sdk.actions.ready() called");
 
       // Access user information via the context
       const userInfo = await frame.sdk.getContext();
@@ -75,8 +78,9 @@ export async function openUrl(url: string) {
   console.log(`Attempting to open URL: ${url}`);
   try {
     if (isFrameAvailable()) {
-      console.log("Using frame.sdk.openUrl");
-      await frame.sdk.openUrl(url);
+      console.log("Using frame.sdk.actions.openUrl");
+      // Use actions namespace as per documentation
+      await frame.sdk.actions.openUrl({ url });
     } else {
       console.log("Frame SDK not available, using window.open");
       // Fallback for development
@@ -97,8 +101,9 @@ export async function viewProfile(fid: number) {
   console.log(`Attempting to view profile for FID: ${fid}`);
   try {
     if (isFrameAvailable() && fid) {
-      console.log("Using frame.sdk.viewUser");
-      await frame.sdk.viewUser(fid);
+      console.log("Using frame.sdk.actions.viewProfile");
+      // Use actions namespace as per documentation
+      await frame.sdk.actions.viewProfile({ fid });
     } else if (process.env.NODE_ENV === "development") {
       console.log(`DEV MODE: Would view profile for FID: ${fid}`);
     } else {
